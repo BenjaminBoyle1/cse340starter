@@ -27,7 +27,8 @@ body{
   font-family:var(--body-font);
   color:var(--primary-fg);
   line-height:1.6;
-  background:url('/images/site/small_check.jpg') center top repeat fixed;
+  /* Mobile default: no checkerboard background */
+  background-color: var(--primary-bg);
 }
 
 h1,h2,h3,h4,h5,h6,
@@ -68,18 +69,18 @@ nav a,
   letter-spacing:.02em;
 }
 
-/* -------------------- NAV -------------------- */
+/* -------------------- NAV (always one line) -------------------- */
 nav ul{
   list-style:none;
   display:flex;
-  flex-wrap:nowrap;             /* prevent wrapping */
-  justify-content:space-between;/* space links evenly */
+  flex-wrap:nowrap;              /* keep all 5 on one line */
+  justify-content:space-between; /* even spacing across the row */
   background:var(--secondary-bg);
-  overflow-x:auto;              /* allow horizontal scroll if absolutely too small */
+  overflow-x:auto;               /* if impossibly small, allow horizontal scroll */
 }
 nav li{
-  flex:1 1 auto;                /* each link gets equal space */
-  min-width:0;                  /* prevents flex overflow */
+  flex:1 1 auto;
+  min-width:0;                   /* prevent overflow from long labels */
 }
 nav a{
   display:block;
@@ -89,8 +90,8 @@ nav a{
   text-decoration:none;
   color:var(--secondary-fg);
   font-weight:700;
-  font-size:clamp(.65rem, 2vw, 1rem); /* scales text to fit smaller screens */
-  white-space:nowrap;           /* keep link text on one line */
+  font-size:clamp(.65rem, 2vw, 1rem); /* shrink text on tiny screens */
+  white-space:nowrap;            /* each label stays on one line */
 }
 nav a:hover,
 nav a:focus{ background:var(--button-hover); }
@@ -134,7 +135,7 @@ main{ padding:16px; }
   margin-top:10px;
   padding:10px 14px;
   background:var(--button);
-  color:black;
+  color:black; /* per your current style */
   text-decoration:none;
   font-weight:800;
   border-radius:6px;
@@ -143,7 +144,7 @@ main{ padding:16px; }
 .cta-button:hover{ background:var(--button-hover); }
 
 /* -------------------- UPGRADES & REVIEWS -------------------- */
-/* Stacked by default, but Reviews should come first on small screens */
+/* Stacked by default, Reviews first on small screens */
 .reviews-upgrades{
   display:grid;
   grid-template-columns:1fr;
@@ -151,7 +152,6 @@ main{ padding:16px; }
   align-items:stretch;
   margin-top:26px;
 }
-/* REORDER: Reviews above Upgrades on small screens */
 .reviews{ order:-1; }
 .upgrades{ order:0; }
 
@@ -168,7 +168,7 @@ main{ padding:16px; }
   margin-bottom:20px;
 }
 
-
+/* Upgrades stay a grid even on small screens */
 .upgrades-grid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
@@ -189,14 +189,14 @@ main{ padding:16px; }
 }
 .upgrade-item .image-box{
   width:100%;
-  background:var(--button);      /* matches CTA + hero text */
+  background:var(--button);
   padding:16px;
   border-radius:6px;
   display:flex;
   justify-content:center;
   align-items:center;
   margin-bottom:12px;
-  flex:1;                        /* image box grows to equalize cards */
+  flex:1;
 }
 .upgrade-item img{
   max-width:100%;
@@ -205,7 +205,7 @@ main{ padding:16px; }
 }
 .upgrade-item p{ margin-top:8px; }
 
-/* Reviews: fill column and distribute evenly top-to-bottom */
+/* Reviews fill column and distribute evenly */
 .reviews ul{
   list-style:disc;
   padding-left:22px;
@@ -216,41 +216,40 @@ main{ padding:16px; }
   flex:1;
   display:flex;
   flex-direction:column;
-  justify-content:space-evenly;  /* space above, between, and below */
+  justify-content:space-evenly;
 }
 .reviews li{ margin:0; }
 
 /* -------------------- FOOTER -------------------- */
 footer{ padding:12px 0 4px; color:var(--primary-fg); }
 
-/* ==================== MEDIA QUERIES (ONLY 2) ==================== */
-/* 1) Tablet & up */
+/* ==================== MEDIA QUERIES (2 total) ==================== */
+/* 1) Tablet & up: enable checkerboard bg, scale hero, side-by-side layout */
 @media (min-width:768px){
+  /* Checkerboard appears only on larger screens */
+  body{
+    background:url('/images/site/small_check.jpg') center top repeat; /* no 'fixed' for smoother scroll */
+  }
+
   #top-header{ padding:18px 22px; }
   #top-header .siteName a{ font-size:2rem; }
 
-  nav ul{ flex-wrap:nowrap; }
-  nav li{ flex:1 1 auto; }
+  nav ul{ justify-content:space-evenly; }
+  nav a{ font-size:clamp(.8rem, 1.2vw, 1rem); }
 
   .hero{ background-size:560px auto; min-height:340px; }
   .hero-text{ max-width:42%; left:8%; font-size:1.1rem; padding:18px 20px; }
   .hero-text .model-name{ font-size:1.35rem; }
   .hero-header h2{ font-size:1.6rem; }
 
-  /* Side-by-side columns on larger screens */
-  .reviews-upgrades{
-    grid-template-columns:1fr 1fr;
-  }
-
-  /* Reset order so visual order matches markup (Upgrades left, Reviews right) */
+  .reviews-upgrades{ grid-template-columns:1fr 1fr; } /* side-by-side */
   .reviews{ order:0; }
   .upgrades{ order:0; }
 
-  /* Upgrades grid stays 2×2 */
   .upgrades-grid{ grid-template-columns:repeat(2,1fr); }
 }
 
-/* 2) Desktop wide */
+/* 2) Desktop wide: larger hero image/card */
 @media (min-width:1200px){
   .content-card{ width:min(95%, 1400px); }
   .hero{ background-size:760px auto; min-height:440px; }
