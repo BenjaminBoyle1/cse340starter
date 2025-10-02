@@ -109,7 +109,7 @@ main{ padding:16px; }
 .hero{
   position:relative;
   min-height:260px;
-  background:url('/images/vehicles/delorean.jpg') no-repeat center center / 320px auto;
+  background:url('/public/images/vehicles/delorean.jpg') no-repeat center center / 320px auto;
 }
 .hero-text{
   position:absolute;
@@ -228,7 +228,7 @@ footer{ padding:12px 0 4px; color:var(--primary-fg); }
 @media (min-width:768px){
   /* Checkerboard appears only on larger screens */
   body{
-    background:url('/images/site/small_check.jpg') center top repeat; /* no 'fixed' for smoother scroll */
+    background:url('/public/images/site/small_check.jpg') center top repeat; /* no 'fixed' for smoother scroll */
   }
 
   #top-header{ padding:18px 22px; }
