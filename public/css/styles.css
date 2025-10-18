@@ -257,3 +257,248 @@ footer{ padding:12px 0 4px; color:var(--primary-fg); }
   .hero-text .model-name{ font-size:1.5rem; }
   .hero-header h2{ font-size:1.75rem; }
 }
+
+/*******************************************************
+  INVENTORY CLASSIFICATION GRID (even titles, aligned prices, no distortion)
+*******************************************************/
+#inv-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+/* Each card */
+#inv-display li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+#inv-display li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Image container maintains consistent ratio */
+#inv-display li > a {
+  display: block;
+  aspect-ratio: 16 / 9;     /* Use 4 / 3 or 3 / 2 if your images are taller */
+  background: #f3f4f6;
+  overflow: hidden;
+}
+
+/* Image fits without stretching */
+#inv-display li > a img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;       /* Keeps proportions, may letterbox */
+  display: block;
+}
+
+/* If you prefer full coverage (slight cropping), switch to: */
+ /* object-fit: cover; */
+
+/* Vehicle title and price area */
+.namePrice {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  padding: 1rem;
+}
+
+.namePrice h2 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  min-height: 2.5rem;       /* keeps titles the same height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.namePrice a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 600;
+}
+
+.namePrice a:hover {
+  color: #0066cc;
+}
+
+/* Price always aligns evenly at the bottom */
+.namePrice span {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a73e8;
+  margin-top: 0.5rem;
+}
+
+/* Horizontal line between title and price */
+#inv-display li hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 0.5rem 0 1rem;
+}
+
+/* Responsive tweaks */
+@media (min-width: 900px) {
+  #inv-display {
+    gap: 2rem;
+  }
+}
+
+
+/*******************************************************
+  DETAIL VIEW (Util.buildItemDetail)
+*******************************************************/
+#inv-detail-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem 0;
+  align-items: center;
+  padding: 1rem;
+}
+
+#inv-detail-display img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.inv-detail-info {
+  max-width: 600px;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.inv-detail-info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+.inv-detail-info .inv-price {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 1rem;
+}
+
+.inv-detail-info p {
+  line-height: 1.6;
+  color: #444;
+}
+
+.inv-detail-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+  font-size: 1rem;
+}
+
+.inv-detail-info li {
+  margin-bottom: 0.5rem;
+}
+
+/*******************************************************
+  RESPONSIVE LAYOUT
+*******************************************************/
+@media (min-width: 900px) {
+  #inv-detail-display {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  #inv-detail-display img {
+    flex: 1;
+  }
+
+  .inv-detail-info {
+    flex: 1;
+    margin-left: 2rem;
+  }
+}
+
+/*******************************************************
+  SHARED STYLES
+*******************************************************/
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1.5rem 0;
+}
+
+.notice {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
+}
+/*******************************************************
+  ERROR PAGE STYLING
+*******************************************************/
+.error-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 2.5rem 3rem;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #c62828; /* bold red tone for errors */
+}
+
+.error-message {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #1a73e8;
+  color: white;
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.cta-button:hover {
+  background-color: #155bb5;
+}
+/* End of styles.css */
