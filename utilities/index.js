@@ -34,9 +34,9 @@ Util.buildClassificationGrid = async function(data){
       + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model 
       + 'details"><img src="' + vehicle.inv_image 
       +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
-      +' on CSE Motors" /></a>'
+      +' on CSE Motors"></a>'
       grid += '<div class="namePrice">'
-      grid += '<hr />'
+      grid += '<hr>'
       grid += '<h2>'
       grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View ' 
       + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
@@ -87,10 +87,10 @@ Util.buildItemDetail = async function (data) {
     img +
     '" alt="Image of ' +
     heading +
-    ' on CSE Motors" />';
+    ' on CSE Motors">';
   detail += '<div class="inv-detail-info">';
   detail += "<h2>" + heading + "</h2>";
-  detail += "<hr />";
+  detail += "<hr>";
   detail +=
     '<p class="inv-price">$' +
     new Intl.NumberFormat("en-US").format(price) +
