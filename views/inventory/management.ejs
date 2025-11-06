@@ -1,0 +1,20 @@
+<%- include('../partials/header', { title }) %>
+<main id="management">
+  <h1>Inventory Management</h1>
+
+  <% if (notice) { %>
+    <p class="flash-success"><%= notice %></p>
+  <% } %>
+
+  <% if (errors && errors.length) { %>
+    <ul class="errors">
+      <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+    </ul>
+  <% } %>
+
+  <ul class="actions">
+    <li><a href="/inv/add-classification">Add New Classification</a></li>
+    <li><a href="/inv/add-inventory">Add New Vehicle</a></li>
+  </ul>
+</main>
+<%- include('../partials/footer') %>

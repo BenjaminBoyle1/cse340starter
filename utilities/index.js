@@ -1,125 +1,81 @@
 const invModel = require("../models/inventory-model")
 const Util = {}
 
-/* ************************
- * Constructs the nav HTML unordered list
- ************************** */
-Util.getNav = async function (req, res, next) {
-  let data = await invModel.getClassifications()
+Util.getNav = async function () {
+  const data = await invModel.getClassifications()
   let list = "<ul>"
   list += '<li><a href="/" title="Home page">Home</a></li>'
   data.rows.forEach((row) => {
-    list += "<li>"
-    list +=
-      '<a href="/inv/type/' +
-      row.classification_id +
-      '" title="See our inventory of ' +
-      row.classification_name +
-      ' vehicles">' +
-      row.classification_name +
-      "</a>"
-    list += "</li>"
+    list += `<li><a href="/inv/type/${row.classification_id}"
+                title="See our inventory of ${row.classification_name} vehicles">
+                ${row.classification_name}</a></li>`
   })
   list += "</ul>"
   return list
 }
 
-Util.buildClassificationGrid = async function(data){
-  let grid
-  if(data.length > 0){
+Util.buildClassificationGrid = async function (data) {
+  let grid = ""
+  if (data.length > 0) {
     grid = '<ul id="inv-display">'
-    data.forEach(vehicle => { 
-      grid += '<li>'
-      grid +=  '<a href="../../inv/detail/'+ vehicle.inv_id 
-      + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model 
-      + 'details"><img src="' + vehicle.inv_image 
-      +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
-      +' on CSE Motors"></a>'
-      grid += '<div class="namePrice">'
-      grid += '<hr>'
-      grid += '<h2>'
-      grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View ' 
-      + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
-      + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
-      grid += '</h2>'
-      grid += '<span>$' 
-      + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
-      grid += '</div>'
-      grid += '</li>'
+    data.forEach((v) => {
+      grid += `<li>
+        <a href="../../inv/detail/${v.inv_id}" title="View ${v.inv_make} ${v.inv_model} details">
+          <img src="${v.inv_image}" alt="Image of ${v.inv_make} ${v.inv_model} on CSE Motors">
+        </a>
+        <div class="namePrice">
+          <hr>
+          <h2><a href="../../inv/detail/${v.inv_id}" title="View ${v.inv_make} ${v.inv_model} details">
+            ${v.inv_make} ${v.inv_model}</a></h2>
+          <span>$${new Intl.NumberFormat("en-US").format(v.inv_price)}</span>
+        </div>
+      </li>`
     })
-    grid += '</ul>'
-  } else { 
+    grid += "</ul>"
+  } else {
     grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
   }
   return grid
 }
 
 Util.buildItemDetail = async function (data) {
-  let detail = "";
-
-  // Handle missing data
   if (!data || data.length === 0) {
-    const error = new Error("404: Vehicle not found. Please try again.");
-    error.status = 404;
-    throw error;
+    const error = new Error("404: Vehicle not found.")
+    error.status = 404
+    throw error
   }
-
-  // Safely get first vehicle object
-  const v = data[0];
-
-  // Fallbacks for undefined fields
-  const year = v.inv_year ?? "";
-  const make = v.inv_make ?? "";
-  const model = v.inv_model ?? "";
-  const desc = v.inv_description ?? "";
-  const color = v.inv_color ?? "";
-  const miles = v.inv_miles ?? 0;
-  const price = v.inv_price ?? 0;
-  const img = v.inv_image ?? v.inv_thumbnail ?? "";
-
-  // Build heading cleanly (skip undefined)
-  const heading = [year, make, model].filter(Boolean).join(" ");
-
-  // Build HTML safely
-  detail += '<div id="inv-detail-display">';
-  detail +=
-    '<img src="' +
-    img +
-    '" alt="Image of ' +
-    heading +
-    ' on CSE Motors">';
-  detail += '<div class="inv-detail-info">';
-  detail += "<h2>" + heading + "</h2>";
-  detail += "<hr>";
-  detail +=
-    '<p class="inv-price">$' +
-    new Intl.NumberFormat("en-US").format(price) +
-    "</p>";
-
-  // Only render description if it exists
-  if (desc) {
-    detail += "<p>" + desc + "</p>";
-  }
-
-  detail += "<ul>";
-  if (color) {
-    detail += "<li>Color: " + color + "</li>";
-  }
-  detail +=
-    "<li>Miles: " +
-    new Intl.NumberFormat("en-US").format(miles) +
-    "</li>";
-  detail += "</ul>";
-  detail += "</div>";
-  detail += "</div>";
-
-  return detail;
-};
-
-
-Util.handleErrors = (fn) => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next)
+  const v = data[0]
+  const title = `${v.inv_year ?? ""} ${v.inv_make ?? ""} ${v.inv_model ?? ""}`
+  return `
+    <div id="inv-detail-display">
+      <img src="${v.inv_image}" alt="Image of ${title} on CSE Motors">
+      <div class="inv-detail-info">
+        <h2>${title}</h2><hr>
+        <p class="inv-price">$${new Intl.NumberFormat("en-US").format(v.inv_price)}</p>
+        <p>${v.inv_description ?? ""}</p>
+        <ul>
+          <li>Color: ${v.inv_color ?? "N/A"}</li>
+          <li>Miles: ${new Intl.NumberFormat("en-US").format(v.inv_miles ?? 0)}</li>
+        </ul>
+      </div>
+    </div>`
 }
 
+Util.buildClassificationList = async function (classification_id = null) {
+  const data = await invModel.getClassifications()
+  let html = `<select name="classification_id" id="classificationList" required>
+                <option value=''>Choose a Classification</option>`
+  data.rows.forEach((row) => {
+    const selected =
+      classification_id && Number(row.classification_id) === Number(classification_id)
+        ? " selected"
+        : ""
+    html += `<option value="${row.classification_id}"${selected}>${row.classification_name}</option>`
+  })
+  html += "</select>"
+  return html
+}
+
+Util.handleErrors = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = Util

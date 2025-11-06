@@ -26,3 +26,20 @@ WHERE cls.classification_name = 'Sport';
 -- Task 6: Update all records in the inventory table to modify inv_image and inv_thumbnail paths
 UPDATE inventory
 SET inv_image = REPLACE(inv_image, '/images/', '/images/vehicles/'),
+
+
+SELECT * FROM public.classification
+ORDER BY classification_id ASC 
+
+
+DELETE FROM public.classification
+WHERE classification_id = 10;
+
+
+DELETE FROM public.inventory
+WHERE inv_make = 'Lamborghini' AND inv_model = 'Aventador SVJ';
+
+SELECT * FROM public.classification
+WHERE classification_name = 'SportsCars';
+
+SELECT * FROM public.inventory

@@ -26,9 +26,54 @@ async function getItemById(inv_id) {
         console.error("getItemById error " + error);
     }
 }
+/* --- ADD: list classifications for select --- */
+async function getClassifications() {
+  const sql = `SELECT classification_id, classification_name
+               FROM public.classification
+               ORDER BY classification_name`
+  const result = await pool.query(sql)
+  return result // caller expects { rows: [...] }
+}
+
+/* --- ADD: insert classification --- */
+async function addClassification(classification_name) {
+  try {
+    const sql = `INSERT INTO public.classification (classification_name)
+                 VALUES ($1)`
+    const data = await pool.query(sql, [classification_name])
+    return data.rowCount === 1
+  } catch (e) {
+    console.error("addClassification error:", e)
+    return false
+  }
+}
+
+/* --- ADD: insert inventory item --- */
+async function addInventory(p) {
+  try {
+    const sql = `
+      INSERT INTO public.inventory
+        (inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail,
+         inv_price, inv_miles, inv_color, classification_id)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`
+    const params = [
+      p.inv_make, p.inv_model, p.inv_year, p.inv_description,
+      p.inv_image, p.inv_thumbnail, p.inv_price, p.inv_miles,
+      p.inv_color, p.classification_id
+    ]
+    const data = await pool.query(sql, params)
+    return data.rowCount === 1
+  } catch (e) {
+    console.error("addInventory error:", e)
+    return false
+  }
+}
 
 module.exports = {
     getClassifications,
     getInventoryByClassificationId,
     getItemById,
+    getClassifications,
+    addClassification,
+    addInventory,
 };

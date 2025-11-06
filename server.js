@@ -1,11 +1,9 @@
-/* ******************************************
- * Primary app file
- ******************************************/
+const path = require("path")
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
-const path = require("path")
-const static = express.static(path.join(__dirname, "/public"))
+const session = require("express-session")
+const flash = require("connect-flash")
+
 const app = express()
 
 // Routers & controllers
@@ -21,14 +19,35 @@ app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
 /* ***********************
- * Routes
+ * Middleware
  *************************/
 // Static files
-app.use(static);
-// Index route
+app.use(express.static(path.join(__dirname, "public")))
+
+// Body parsers (required for req.body)
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+// Session + flash (in-memory store – fine for this assignment)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "dev-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 1000 * 60 * 30 },
+  })
+)
+app.use(flash())
+
+/* ***********************
+ * Routes
+ *************************/
 app.get("/", utilities.handleErrors(baseController.buildHome))
-app.use("/inv", utilities.handleErrors(inventoryRoute));
-// 404 (no route matched)
+app.use("/inv", inventoryRoute)
+
+/* ***********************
+ * 404 handler
+ *************************/
 app.use(async (req, res, next) => {
   const nav = await utilities.getNav()
   res.status(404).render("errors/error", {
@@ -38,7 +57,9 @@ app.use(async (req, res, next) => {
   })
 })
 
-// Central error handler
+/* ***********************
+ * Central error handler
+ *************************/
 app.use(async (err, req, res, next) => {
   console.error(err)
   const nav = await utilities.getNav()
@@ -50,13 +71,9 @@ app.use(async (err, req, res, next) => {
   })
 })
 
-
 /* ***********************
  * Server
  *************************/
-const port = process.env.PORT
-const host = process.env.HOST
-
-app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`)
-})
+const port = process.env.PORT || 3000
+const host = process.env.HOST || "localhost"
+app.listen(port, () => console.log(`App running at http://${host}:${port}`))
