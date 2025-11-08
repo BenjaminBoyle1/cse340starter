@@ -60,7 +60,7 @@ invCont.registerClassification = async (req, res) => {
   const { classification_name } = req.body
   const success = await invModel.addClassification(classification_name)
   if (success) {
-    req.flash("notice", "Classification added successfully.")
+    req.flash("notice",  `${classification_name} classification added successfully.`)
     return res.redirect("/inv")
   } else {
     const nav = await utilities.getNav()
@@ -110,7 +110,7 @@ invCont.registerInventory = async (req, res) => {
   })
 
   if (success) {
-    req.flash("notice", "Inventory item added successfully.")
+    req.flash("notice",  `${inv_make} ${inv_model} added to inventory successfully.`)
     return res.redirect("/inv")
   } else {
     const nav = await utilities.getNav()
