@@ -1,0 +1,56 @@
+<h1>Register</h1>
+
+<% if (notice) { %>
+  <p class="flash-fail"><%= notice %></p>
+<% } %>
+
+<% if (errors && errors.length) { %>
+  <ul class="errors">
+    <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+  </ul>
+<% } %>
+
+<form action="/account/register" method="post" class="needs-validation" novalidate>
+  <label for="account_firstname">First Name</label>
+  <input
+    id="account_firstname"
+    name="account_firstname"
+    type="text"
+    required
+    value="<%= account_firstname %>"
+  >
+
+  <label for="account_lastname">Last Name</label>
+  <input
+    id="account_lastname"
+    name="account_lastname"
+    type="text"
+    required
+    value="<%= account_lastname %>"
+  >
+
+  <label for="account_email">Email</label>
+  <input
+    id="account_email"
+    name="account_email"
+    type="email"
+    required
+    value="<%= account_email %>"
+  >
+
+  <label for="account_password">Password</label>
+  <input
+    id="account_password"
+    name="account_password"
+    type="password"
+    required
+  >
+  <small>
+    Password must be at least 12 characters and include upper and lower case letters,
+    a number, and a special character.
+  </small>
+
+  <button type="submit">Register</button>
+</form>
+
+<script src="/js/form-validation.js" defer></script>

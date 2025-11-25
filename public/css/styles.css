@@ -677,5 +677,18 @@ form button {
 form button:hover {
   background-color: #0056b3;
 }
+#tools a {
+  margin-left: 1rem;  /* space between Welcome and Logout */
+}
+
+#tools a:first-child {
+  margin-right: 0.5rem;
+  font-weight: bold;     /* makes Welcome stand out */
+  color: #0a4cff;        /* accent color */
+}
+
+#tools a:last-child {
+  color: #c62828;       /* red for Logout */
+}
 
 /* End of styles.css */

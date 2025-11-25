@@ -1,33 +1,63 @@
 const express = require("express")
 const router = express.Router()
 const invController = require("../controllers/invController")
-const { handleErrors } = require("../utilities")
+const utilities = require("../utilities")
 const invValidate = require("../utilities/inv-validation")
 
-// Management view
-router.get("/", handleErrors(invController.buildManagement))
+const { handleErrors, checkLogin, checkEmployeeOrAdmin } = utilities
 
-// Add classification
-router.get("/add-classification", handleErrors(invController.buildAddClassification))
+// Management view (PROTECTED)
+router.get(
+  "/",
+  checkLogin,
+  checkEmployeeOrAdmin,
+  handleErrors(invController.buildManagement)
+)
+
+// Add classification (PROTECTED)
+router.get(
+  "/add-classification",
+  checkLogin,
+  checkEmployeeOrAdmin,
+  handleErrors(invController.buildAddClassification)
+)
 router.post(
   "/add-classification",
+  checkLogin,
+  checkEmployeeOrAdmin,
   invValidate.classificationRules(),
   invValidate.checkClassificationData,
   handleErrors(invController.registerClassification)
 )
 
-// Add inventory
-router.get("/add-inventory", handleErrors(invController.buildAddInventory))
+// Add inventory (PROTECTED)
+router.get(
+  "/add-inventory",
+  checkLogin,
+  checkEmployeeOrAdmin,
+  handleErrors(invController.buildAddInventory)
+)
 router.post(
   "/add-inventory",
+  checkLogin,
+  checkEmployeeOrAdmin,
   invValidate.inventoryRules(),
   invValidate.checkInventoryData,
   handleErrors(invController.registerInventory)
 )
 
-// Existing routes
-router.get("/type/:classificationID", handleErrors(invController.buildByClassificationId))
-router.get("/detail/:invID", handleErrors(invController.buildByItemId))
-router.get("/triggerError", handleErrors(invController.triggerError))
+// PUBLIC routes: for site visitors (no auth)
+router.get(
+  "/type/:classificationID",
+  handleErrors(invController.buildByClassificationId)
+)
+router.get(
+  "/detail/:invID",
+  handleErrors(invController.buildByItemId)
+)
+router.get(
+  "/triggerError",
+  handleErrors(invController.triggerError)
+)
 
 module.exports = router

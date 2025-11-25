@@ -1,6 +1,11 @@
 const invModel = require("../models/inventory-model")
+const jwt = require("jsonwebtoken")
+
 const Util = {}
 
+/* ****************************************
+ * Build the navigation bar
+ **************************************** */
 Util.getNav = async function () {
   const data = await invModel.getClassifications()
   let list = "<ul>"
@@ -14,6 +19,9 @@ Util.getNav = async function () {
   return list
 }
 
+/* ****************************************
+ * Build inventory classification grid
+ **************************************** */
 Util.buildClassificationGrid = async function (data) {
   let grid = ""
   if (data.length > 0) {
@@ -38,6 +46,9 @@ Util.buildClassificationGrid = async function (data) {
   return grid
 }
 
+/* ****************************************
+ * Build vehicle detail HTML fragment
+ **************************************** */
 Util.buildItemDetail = async function (data) {
   if (!data || data.length === 0) {
     const error = new Error("404: Vehicle not found.")
@@ -61,13 +72,17 @@ Util.buildItemDetail = async function (data) {
     </div>`
 }
 
+/* ****************************************
+ * Build classification <select> element
+ **************************************** */
 Util.buildClassificationList = async function (classification_id = null) {
   const data = await invModel.getClassifications()
   let html = `<select name="classification_id" id="classificationList" required>
                 <option value=''>Choose a Classification</option>`
   data.rows.forEach((row) => {
     const selected =
-      classification_id && Number(row.classification_id) === Number(classification_id)
+      classification_id &&
+      Number(row.classification_id) === Number(classification_id)
         ? " selected"
         : ""
     html += `<option value="${row.classification_id}"${selected}>${row.classification_name}</option>`
@@ -76,6 +91,96 @@ Util.buildClassificationList = async function (classification_id = null) {
   return html
 }
 
-Util.handleErrors = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+/* ****************************************
+ * Async error wrapper
+ **************************************** */
+Util.handleErrors =
+  (fn) =>
+  (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next)
+
+/* ****************************************
+ * Decode JWT into res.locals (login state)
+ **************************************** */
+Util.checkJWTToken = function (req, res, next) {
+  const token = req.cookies && req.cookies.jwt
+  if (!token) {
+    res.locals.loggedin = false
+    res.locals.accountData = null
+    return next()
+  }
+
+  try {
+    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    res.locals.loggedin = true
+    res.locals.accountData = payload
+  } catch (err) {
+    console.error("JWT verification error:", err)
+    res.locals.loggedin = false
+    res.locals.accountData = null
+  }
+
+  next()
+}
+
+/* ****************************************
+ * Require a valid login
+ **************************************** */
+Util.checkLogin = function (req, res, next) {
+  const token = req.cookies && req.cookies.jwt
+  if (!token) {
+    req.flash("notice", "Please log in.")
+    return res.status(401).render("account/login", {
+      title: "Login",
+      nav: null, // will be built below
+      errors: null,
+      notice: req.flash("notice")[0] || "Please log in.",
+      account_email: "",
+    })
+  }
+
+  try {
+    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    res.locals.loggedin = true
+    res.locals.accountData = payload
+    next()
+  } catch (err) {
+    console.error("JWT verification error:", err)
+    res.locals.loggedin = false
+    res.locals.accountData = null
+    req.flash("notice", "Invalid session. Please log in again.")
+    return res.status(401).render("account/login", {
+      title: "Login",
+      nav: null,
+      errors: null,
+      notice: req.flash("notice")[0] || "Invalid session. Please log in again.",
+      account_email: "",
+    })
+  }
+}
+
+/* ****************************************
+ * Require Employee or Admin
+ **************************************** */
+Util.checkEmployeeOrAdmin = function (req, res, next) {
+  const account = res.locals.accountData
+  if (
+    account &&
+    (account.account_type === "Employee" || account.account_type === "Admin")
+  ) {
+    return next()
+  }
+
+  req.flash("notice", "You must be an Employee or Admin to access that page.")
+  return res.status(403).render("account/login", {
+    title: "Login",
+    nav: null,
+    errors: null,
+    notice:
+      req.flash("notice")[0] ||
+      "You must be an Employee or Admin to access that page.",
+    account_email: "",
+  })
+}
 
 module.exports = Util
