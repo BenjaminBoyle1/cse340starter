@@ -489,7 +489,7 @@ footer{ padding:12px 0 4px; color:var(--primary-fg); }
 
 .cta-button {
   display: inline-block;
-  background-color: #1a73e8;
+  background-color: #013e7a;
   color: white;
   text-decoration: none;
   padding: 0.8rem 1.5rem;
@@ -553,7 +553,7 @@ textarea:focus {
 }
 
 button {
-  background-color: #0066cc;
+  background-color: #013e7a;
   color: white;
   font-weight: bold;
   border: none;
@@ -664,7 +664,7 @@ form label {
 }
 
 form button {
-  background-color: #007bff;
+  background-color: #013e7a;
   color: #fff;
   border: none;
   padding: 0.7rem 1.4rem;
