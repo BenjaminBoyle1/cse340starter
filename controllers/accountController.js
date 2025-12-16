@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const accountModel = require("../models/account-model")
+const reviewModel = require("../models/review-model")
 const utilities = require("../utilities")
 
 const accountController = {}
@@ -152,14 +153,20 @@ accountController.buildAccountManagement = async function (req, res) {
   const accountData = res.locals.accountData
   const notice = req.flash("notice")[0] || null
 
+  const reviews = await reviewModel.getReviewsByAccountId(
+    accountData.account_id
+  )
+
   res.render("account/management", {
     title: "Account Management",
     nav,
     errors: null,
     notice,
     accountData,
+    reviews,
   })
 }
+
 
 /* ****************************************
  * Update Account view (Task 4)
