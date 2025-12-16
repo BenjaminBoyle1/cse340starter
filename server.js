@@ -13,7 +13,7 @@ const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
 const baseController = require("./controllers/baseController")
 const utilities = require("./utilities")
-
+const reviewRoute = require("./routes/reviewRoute")
 /* ***********************
  * View Engine & Layouts
  *************************/
@@ -55,6 +55,7 @@ app.get("/", utilities.handleErrors(baseController.buildHome))
 
 app.use("/inv", inventoryRoute)
 app.use("/account", accountRoute)
+app.use("/reviews", reviewRoute)
 
 /* ***********************
  * 404 handler

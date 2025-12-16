@@ -690,5 +690,26 @@ form button:hover {
 #tools a:last-child {
   color: #c62828;       /* red for Logout */
 }
+/* Fix: Ensure image + info align evenly on desktop */
+@media (min-width: 900px) {
+
+  #inv-detail-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  #inv-detail-display img {
+    flex: 1 1 50%;
+    max-width: 500px;
+  }
+
+  .inv-detail-info {
+    flex: 1 1 50%;
+    max-width: 500px;
+  }
+}
 
 /* End of styles.css */

@@ -55,22 +55,38 @@ Util.buildItemDetail = async function (data) {
     error.status = 404
     throw error
   }
+
   const v = data[0]
   const title = `${v.inv_year ?? ""} ${v.inv_make ?? ""} ${v.inv_model ?? ""}`
+  const price = `$${new Intl.NumberFormat("en-US").format(v.inv_price)}`
+  const miles = new Intl.NumberFormat("en-US").format(v.inv_miles ?? 0)
+
   return `
-    <div id="inv-detail-display">
+  <div id="inv-detail-display">
+    <div class="inv-image-box">
       <img src="${v.inv_image}" alt="Image of ${title} on CSE Motors">
-      <div class="inv-detail-info">
-        <h2>${title}</h2><hr>
-        <p class="inv-price">$${new Intl.NumberFormat("en-US").format(v.inv_price)}</p>
-        <p>${v.inv_description ?? ""}</p>
-        <ul>
-          <li>Color: ${v.inv_color ?? "N/A"}</li>
-          <li>Miles: ${new Intl.NumberFormat("en-US").format(v.inv_miles ?? 0)}</li>
-        </ul>
-      </div>
-    </div>`
+    </div>
+
+    <div class="inv-detail-info">
+      <h2>${title}</h2>
+
+      <p class="inv-price">${price}</p>
+
+      <p class="inv-description">
+        ${v.inv_description ?? ""}
+      </p>
+
+      <hr class="inv-separator">
+
+      <ul class="inv-stats">
+        <li><strong>Color:</strong> ${v.inv_color ?? "N/A"}</li>
+        <li><strong>Miles:</strong> ${miles}</li>
+      </ul>
+    </div>
+  </div>
+  `
 }
+
 
 /* ****************************************
  * Build classification <select> element

@@ -19,3 +19,38 @@
   <h3>Inventory Management</h3>
   <p><a href="/inv/">Manage Inventory</a></p>
 <% } %>
+
+<!-- ========== Reviews written by this client (Task 4) ========== -->
+<h3>Your Reviews</h3>
+
+<% if (reviews && reviews.length) { %>
+  <ul class="review-list account-review-list">
+    <% reviews.forEach(r => { %>
+      <li class="review-item">
+        <p>
+          <strong><%= r.inv_make %> <%= r.inv_model %></strong>
+          (<%= r.review_date_display %>)
+        </p>
+        <p><%= r.review_text %></p>
+        <p>
+          <a href="/reviews/edit/<%= r.review_id %>">Edit</a>
+          |
+          <form
+            action="/reviews/delete"
+            method="post"
+            style="display:inline"
+          >
+            <input type="hidden" name="review_id" value="<%= r.review_id %>">
+            <button
+              type="submit"
+              onclick="return confirm('Delete this review?');"
+            >
+              Delete
+            </button>
+          </form>
+      </li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>You have not written any reviews yet.</p>
+<% } %>

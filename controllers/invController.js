@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const reviewModel = require("../models/review-model")
 const utilities = require("../utilities")
 
 const invCont = {}
@@ -17,14 +18,51 @@ invCont.buildByClassificationId = async (req, res, next) => {
   })
 }
 
-invCont.buildByItemId = async (req, res, next) => {
-  const invId = req.params.invID
-  const data = await invModel.getItemById(invId)
-  const detail = await utilities.buildItemDetail(data)
+invCont.buildByItemId = async function (req, res, next) {
+  const inv_id = parseInt(req.params.invID)
   const nav = await utilities.getNav()
-  const title = `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`
-  res.render("./inventory/detail", { title, nav, detail })
+
+  const itemData = await invModel.getItemById(inv_id)
+  const detail = await utilities.buildItemDetail(itemData)
+
+  const title =
+    itemData && itemData[0]
+      ? `${itemData[0].inv_year} ${itemData[0].inv_make} ${itemData[0].inv_model}`
+      : "Vehicle Detail"
+
+  // Get reviews for this item (newest first)
+  const reviews = await reviewModel.getReviewsByInvId(inv_id)
+
+  // Notice (for validation messages, etc.)
+  const notice = req.flash("notice")[0] || null
+
+  // If logged in, compute screen name and account id
+  let screenName = null
+  let account_id = null
+  if (res.locals.loggedin && res.locals.accountData) {
+    const a = res.locals.accountData
+    screenName = a.account_firstname.charAt(0) + a.account_lastname
+    account_id = a.account_id
+  }
+
+  res.render("inventory/detail", {
+  title,
+  nav,
+  detail,
+  errors: null,
+  notice,
+  reviews,
+  loggedin: res.locals.loggedin,
+  screenName,
+  inv_id,
+  account_id,
+
+  // NEW: sticky review text
+  review_text: req.flash("review_text")[0] || ""
+})
+
 }
+
 
 invCont.triggerError = async function (req, res, next) {
   const err = new Error("This is a forced error.")

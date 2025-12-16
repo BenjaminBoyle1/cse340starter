@@ -1,4 +1,68 @@
 <% if (title) { %>
   <h1 class="item-detail-header"><%= title %></h1>
 <% } else { res.redirect('/') } %>
+
+<!-- Vehicle Detail Section -->
 <%- detail %>
+
+<!-- ====================
+     Reviews Section
+     ==================== -->
+<section id="reviews-section">
+  <h2>Reviews</h2>
+
+  <% if (notice) { %>
+    <p class="flash-fail"><%= notice %></p>
+  <% } %>
+
+  <% if (reviews && reviews.length) { %>
+    <ul class="review-list">
+      <% reviews.forEach(r => { %>
+        <li class="review-item">
+          <p class="review-text"><%= r.review_text %></p>
+          <p class="review-meta">
+            By <strong><%= r.screen_name %></strong>
+            on <%= r.review_date_display %>
+          </p>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>No reviews yet. Be the first to review this vehicle!</p>
+  <% } %>
+
+  <% if (!loggedin) { %>
+    <p>
+      You can add a review by
+      <a href="/account/login">logging in</a>.
+    </p>
+  <% } else { %>
+    <h3>Add Your Review</h3>
+
+<p class="review-rules">
+  Reviews must be at least <strong>5 characters long</strong> and should be clear and respectful.
+</p>
+
+<p>
+  Screen name:
+  <strong><%= screenName %></strong>
+</p>
+
+<form action="/reviews/add" method="post" class="review-form">
+  <label for="review_text">Your Review</label>
+
+  <textarea
+    id="review_text"
+    name="review_text"
+    rows="4"
+    required
+  ><%= typeof review_text !== 'undefined' ? review_text : '' %></textarea>
+
+  <input type="hidden" name="inv_id" value="<%= inv_id %>">
+  <input type="hidden" name="account_id" value="<%= account_id %>">
+
+  <button type="submit">Submit Review</button>
+</form>
+
+  <% } %>
+</section>
